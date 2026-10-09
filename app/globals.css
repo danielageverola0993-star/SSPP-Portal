@@ -1,26 +1,57 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
+:root { color-scheme: light; --ink: #12313a; --muted: #688088; --cyan: #20c4dd; --blue: #1679ed; }
+* { box-sizing: border-box; }
+html, body { min-height: 100%; margin: 0; }
+body { color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
+button, input, select { font: inherit; }
+.login-page { min-height: 100vh; display: grid; grid-template-columns: 56% 44%; background: #b9d8d9; }
+.campus-panel { position: relative; min-height: 100vh; overflow: hidden; background-color: #1888a0; background-position: center 48%; background-size: cover; }
+.campus-wash { position: absolute; inset: 0; z-index: -1; background: linear-gradient(125deg,rgba(28,181,218,.12),transparent 36%,rgba(5,47,51,.15)); }
+.campus-caption { position: absolute; left: clamp(32px,6vw,92px); bottom: 48px; display: grid; gap: 8px; color: white; text-shadow: 0 1px 12px #102c35aa; }
+.campus-caption span { font-size: 11px; font-weight: 700; letter-spacing: .22em; }
+.campus-caption strong { font-family: Georgia,serif; font-size: clamp(25px,3vw,42px); font-weight: 500; }
+.login-panel { display: grid; place-items: center; min-height: 100vh; padding: 42px 38px 22px; background: #b9d8d9; }
+.login-inner { width: min(100%, 460px); display: flex; flex-direction: column; align-items: center; }
+.college-mark { width: 102px; height: 102px; display: block; object-fit: cover; border-radius: 50%; background: white; box-shadow: 0 5px 15px #17465024; margin: 0 auto 26px; }
+.login-card { width: 100%; border-radius: 18px; background: var(--cyan); padding: 32px 40px 26px; box-shadow: 0 16px 35px #2c788329; }
+.card-heading { text-align: center; margin-bottom: 26px; }
+.eyebrow { display: none; font-size: 10px; font-weight: 700; letter-spacing: .16em; color: #126b7e; }
+.card-heading h1 { margin: 0; color: #092a35; font: 700 21px Georgia, "Times New Roman", serif; }
+.card-heading p { margin: 8px 0 0; color: #276b78; font-size: 12px; }
+.login-form { display: flex; flex-direction: column; }
+.login-form > label, .password-label label { margin: 0 0 6px; color: #15353d; font-size: 11px; font-weight: 600; }
+.select-wrap, .input-wrap { position: relative; display: flex; align-items: center; height: 43px; margin-bottom: 16px; border: 1px solid #dbe4e8; border-radius: 24px; background: #f5f6f7; box-shadow: 0 2px 5px #08384315; }
+.select-wrap select { appearance: none; width: 100%; height: 100%; border: 0; outline: 0; border-radius: inherit; padding: 0 40px 0 17px; background: transparent; color: #283a40; font-size: 12px; cursor: pointer; }
+.select-wrap select:invalid { color: #8a9da2; }
+.select-chevron { position: absolute; right: 14px; top: 8px; color: #243f59; font-size: 19px; pointer-events: none; }
+.input-wrap { padding: 0 13px; gap: 9px; }
+.field-icon { width: 13px; flex: 0 0 13px; color: #55717b; }
+.field-icon svg, .password-toggle svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.input-wrap input { width: 100%; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; color: #17353d; font-size: 11px; }
+.input-wrap input::placeholder { color: #98a9ad; }
+.password-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.password-label label { margin: 0; }.password-label a, .support-line a { color: #0c3540; font-size: 10px; font-weight: 600; text-decoration: none; }.password-label a:hover, .support-line a:hover { text-decoration: underline; }
+.password-toggle { display: grid; place-items: center; padding: 3px; border: 0; background: transparent; color: #55717b; cursor: pointer; }
+.login-button { display: flex; align-items: center; justify-content: center; gap: 8px; height: 44px; margin-top: 5px; border: 0; border-radius: 24px; background: var(--blue); color: white; box-shadow: 0 4px 8px #0757ad45; font-size: 12px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: background .18s, transform .18s; }
+.login-button:hover { background: #0969db; transform: translateY(-1px); }.login-button span { font-size: 18px; line-height: 1; }
+.support-line { display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 25px; color: #244f57; font-size: 10px; }.support-line a { font-size: 10px; }.support-line i { width: 1px; height: 11px; margin: 0 5px; background: #36838d; }
+.copyright { margin: 20px 0 0; color: #51757a; font-size: 10px; }
+.signup-panel { min-height: 100vh; }
+.signup-page .login-panel { padding-top: 24px; padding-bottom: 18px; }
+.signup-page .college-mark { width: 94px; height: 94px; margin-bottom: 18px; }
+.signup-card { padding: 24px 32px 18px; }
+.signup-card .card-heading { margin-bottom: 15px; }
+.signup-card .card-heading h1 { font-size: 19px; }
+.signup-card .login-form > label { margin-bottom: 4px; font-size: 10px; }
+.signup-card .select-wrap, .signup-card .input-wrap { height: 36px; margin-bottom: 9px; }
+.signup-card .select-wrap select, .signup-card .input-wrap input { font-size: 10px; }
+.signup-card .terms-heading { margin-top: 0; }
+.signup-card .terms-checkbox { display: flex; align-items: center; gap: 7px; margin: 1px 0 9px; color: #173f47; font-size: 10px; cursor: pointer; }
+.terms-checkbox input { width: 13px; height: 13px; margin: 0; accent-color: var(--blue); }
+.terms-checkbox a { color: #0c3540; font-weight: 700; text-decoration: underline; }
+.signup-card .login-button { height: 39px; margin-top: 2px; }
+.signup-card .support-line { margin-top: 15px; font-size: 9px; }
+.signup-card .support-line a { font-size: 9px; }
+@media (max-width: 760px) { .login-page { grid-template-columns: 1fr; background: #b9d8d9; }.campus-panel { display: none; }.login-panel { padding: 34px 20px 20px; }.college-mark { width: 86px; height: 86px; margin-bottom: 20px; }.login-card { padding: 30px 26px 24px; }.card-heading { margin-bottom: 24px; }.card-heading p { font-size: 11px; } }
+@media (max-width: 380px) { .login-card { padding-inline: 20px; }.signup-card { padding: 22px 18px 16px; }.support-line { flex-wrap: wrap; } }
