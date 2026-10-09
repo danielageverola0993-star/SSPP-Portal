@@ -1,0 +1,109 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function owns(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isStaff() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/staff/$(request.auth.uid));
+    }
+
+    match /staff/{uid} {
+      allow create: if owns(uid)
+        && !isAdmin()
+        && request.resource.data.keys().hasOnly(['uid', 'email', 'role', 'createdAt'])
+        && request.resource.data.uid == uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.role == 'staff'
+        && request.resource.data.createdAt == request.time;
+
+      allow get: if owns(uid) || isAdmin();
+      allow list: if isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    match /admins/{uid} {
+      // Bootstrap the first admin document in the Firebase Console.
+      // Existing admins can then manage other admin profiles.
+      allow get: if owns(uid) || isAdmin();
+      allow list: if isAdmin();
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly(['uid', 'email', 'role', 'createdAt'])
+        && request.resource.data.uid == uid
+        && request.resource.data.role == 'admin';
+      allow delete: if isAdmin();
+    }
+
+    match /adminRequests/{uid} {
+      allow create: if owns(uid)
+        && !isAdmin()
+        && !isStaff()
+        && request.resource.data.keys().hasOnly([
+          'uid', 'email', 'role', 'status', 'createdAt'
+        ])
+        && request.resource.data.uid == uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.role == 'admin'
+        && request.resource.data.status == 'pending'
+        && request.resource.data.createdAt == request.time;
+
+      allow get: if owns(uid) || isAdmin();
+      allow list: if isAdmin();
+      allow update: if isAdmin()
+        && resource.data.status == 'pending'
+        && request.resource.data.status in ['approved', 'rejected']
+        && request.resource.data.reviewedBy == request.auth.uid
+        && request.resource.data.reviewedAt == request.time
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['status', 'reviewedBy', 'reviewedAt']);
+      allow delete: if false;
+    }
+
+    match /bookings/{bookingId} {
+      allow create: if isStaff()
+        && request.resource.data.keys().hasAll([
+          'staffUid', 'customerName', 'contactNumber', 'bookingDate',
+          'purpose', 'status', 'createdAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'staffUid', 'customerName', 'contactNumber', 'bookingDate',
+          'purpose', 'venue', 'notes', 'status', 'createdAt'
+        ])
+        && request.resource.data.staffUid == request.auth.uid
+        && request.resource.data.customerName is string
+        && request.resource.data.contactNumber is string
+        && request.resource.data.bookingDate is timestamp
+        && request.resource.data.purpose is string
+        && request.resource.data.get('venue', '') is string
+        && request.resource.data.get('notes', '') is string
+        && request.resource.data.status == 'pending'
+        && request.resource.data.createdAt == request.time;
+
+      allow get, list: if isAdmin()
+        || (isStaff() && resource.data.staffUid == request.auth.uid);
+
+      allow update: if isAdmin()
+        && resource.data.status == 'pending'
+        && request.resource.data.status in ['approved', 'rejected']
+        && request.resource.data.reviewedBy == request.auth.uid
+        && request.resource.data.reviewedAt == request.time
+        && request.resource.data.reviewNote is string
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['status', 'reviewedBy', 'reviewedAt', 'reviewNote']);
+
+      allow delete: if isAdmin();
+    }
+  }
+}

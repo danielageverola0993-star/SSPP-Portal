@@ -55,3 +55,58 @@ button, input, select { font: inherit; }
 .signup-card .support-line a { font-size: 9px; }
 @media (max-width: 760px) { .login-page { grid-template-columns: 1fr; background: #b9d8d9; }.campus-panel { display: none; }.login-panel { padding: 34px 20px 20px; }.college-mark { width: 86px; height: 86px; margin-bottom: 20px; }.login-card { padding: 30px 26px 24px; }.card-heading { margin-bottom: 24px; }.card-heading p { font-size: 11px; } }
 @media (max-width: 380px) { .login-card { padding-inline: 20px; }.signup-card { padding: 22px 18px 16px; }.support-line { flex-wrap: wrap; } }
+
+.password-label .text-button { padding: 0; border: 0; background: transparent; color: #0c3540; font-size: 10px; font-weight: 600; cursor: pointer; }
+.password-label .text-button:hover { text-decoration: underline; }
+.login-button:hover:not(:disabled) { background: #0969db; transform: translateY(-1px); }
+.login-button:disabled { cursor: wait; opacity: .65; }
+.auth-message { margin: 0 0 12px; color: #702d20; font-size: 11px; line-height: 1.5; text-align: center; }
+.dashboard-page { min-height: 100vh; padding: 42px clamp(20px, 6vw, 88px); background: #f3f8f8; color: #12313a; }
+.dashboard-shell { width: min(100%, 1180px); margin: 0 auto; }
+.dashboard-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-bottom: 24px; border-bottom: 1px solid #d8e4e5; }
+.dashboard-header h1 { margin: 5px 0 0; font: 700 25px Georgia, "Times New Roman", serif; }
+.dashboard-eyebrow { margin: 0; color: #52808a; font-size: 10px; font-weight: 700; letter-spacing: .13em; }
+.dashboard-account { display: flex; align-items: center; gap: 16px; color: #47636a; font-size: 12px; }
+.dashboard-account span { max-width: min(42vw, 320px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dashboard-account button { padding: 9px 16px; border: 1px solid #b7ccce; border-radius: 20px; background: white; color: #12313a; font-size: 12px; font-weight: 700; cursor: pointer; }
+.dashboard-account button:disabled { opacity: .6; cursor: wait; }
+.empty-dashboard { display: flex; min-height: 58vh; flex-direction: column; align-items: center; justify-content: center; padding: 35px 20px; text-align: center; }
+.empty-dashboard-icon { display: grid; width: 54px; height: 54px; place-items: center; margin-bottom: 18px; border-radius: 50%; background: #d9f3eb; color: #167b5a; font-size: 25px; font-weight: 700; }
+.empty-dashboard h2 { margin: 12px 0 8px; font: 700 clamp(23px, 4vw, 32px) Georgia, "Times New Roman", serif; }
+.empty-dashboard > p:not(.dashboard-eyebrow) { margin: 0; color: #688088; font-size: 14px; }
+.empty-dashboard a { margin-top: 23px; color: #126e80; font-size: 13px; font-weight: 700; text-decoration: none; }
+.empty-dashboard a:hover { text-decoration: underline; }
+.dashboard-loading { display: grid; min-height: 100vh; place-items: center; background: #f3f8f8; color: #47636a; font: 14px Arial, Helvetica, sans-serif; }
+@media (max-width: 560px) { .dashboard-page { padding: 24px 18px; }.dashboard-header { align-items: flex-start; flex-direction: column; }.dashboard-account { width: 100%; justify-content: space-between; }.dashboard-account span { max-width: 65%; } }
+.dashboard-content { display: grid; grid-template-columns: minmax(280px, 390px) minmax(0, 1fr); gap: 24px; padding-top: 28px; align-items: start; }
+.booking-panel, .booking-list-panel { padding: 24px; border: 1px solid #dce7e8; border-radius: 16px; background: #fff; box-shadow: 0 8px 24px #1e59600b; }
+.booking-section-heading { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 20px; }
+.booking-section-heading h2 { margin: 6px 0 0; font: 700 21px Georgia, "Times New Roman", serif; }
+.booking-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 12px; }
+.booking-form label { display: grid; gap: 6px; color: #31515a; font-size: 12px; font-weight: 700; }
+.booking-form label span { color: #748b90; font-weight: 400; }
+.booking-form input, .booking-form textarea { width: 100%; min-width: 0; border: 1px solid #cfdddf; border-radius: 8px; padding: 10px 11px; outline: none; background: #fbfdfd; color: #18383f; font-size: 13px; }
+.booking-form input:focus, .booking-form textarea:focus { border-color: #20a6bb; box-shadow: 0 0 0 3px #20a6bb20; }
+.booking-form textarea { resize: vertical; }
+.booking-form .booking-notes { grid-column: 1 / -1; }
+.booking-submit, .approve-button, .reject-button, .refresh-button { border: 0; border-radius: 8px; padding: 10px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.booking-submit { grid-column: 1 / -1; margin-top: 2px; background: #1679ed; color: #fff; }
+.booking-submit:disabled, .approve-button:disabled, .reject-button:disabled, .refresh-button:disabled { opacity: .6; cursor: wait; }
+.booking-list-panel { min-width: 0; }
+.admin-bookings { margin-top: 28px; }
+.refresh-button { border: 1px solid #c5d6d8; background: white; color: #31515a; }
+.booking-empty { margin: 0; padding: 28px 12px; color: #6c858a; font-size: 13px; text-align: center; }
+.booking-cards { display: grid; gap: 12px; }
+.booking-card { padding: 16px; border: 1px solid #e0e9ea; border-radius: 12px; background: #fcfefe; }
+.booking-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.booking-card h3 { margin: 0; color: #173840; font-size: 14px; }
+.booking-card > p { margin: 9px 0 0; color: #45636a; font-size: 12px; line-height: 1.5; }
+.booking-card .booking-meta { color: #748a8f; font-size: 11px; }
+.booking-status { flex: 0 0 auto; border-radius: 20px; padding: 5px 9px; font-size: 10px; font-weight: 700; text-transform: capitalize; }
+.status-pending { background: #fff3d8; color: #8b5d00; }.status-approved { background: #def5e9; color: #167246; }.status-rejected { background: #fde5e2; color: #a23b2e; }
+.booking-actions { display: flex; gap: 8px; margin-top: 14px; }
+.approve-button { background: #188452; color: white; }.reject-button { background: #fff; border: 1px solid #dda49e; color: #a23b2e; }
+.booking-notes-text { padding-top: 8px; border-top: 1px solid #e6eeee; white-space: pre-wrap; }
+.dashboard-message { margin: 18px 0 0; border: 1px solid #f0cf9b; border-radius: 9px; padding: 11px 14px; background: #fff8e9; color: #74521a; font-size: 12px; line-height: 1.5; }
+@media (max-width: 900px) { .dashboard-content { grid-template-columns: 1fr; }.booking-panel { max-width: none; } }
+@media (max-width: 520px) { .booking-panel, .booking-list-panel { padding: 17px; }.booking-form { grid-template-columns: 1fr; }.booking-form .booking-notes, .booking-submit { grid-column: auto; } }
