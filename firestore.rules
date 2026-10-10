@@ -74,20 +74,27 @@ service cloud.firestore {
     match /bookings/{bookingId} {
       allow create: if isStaff()
         && request.resource.data.keys().hasAll([
-          'staffUid', 'customerName', 'contactNumber', 'bookingDate',
-          'purpose', 'status', 'createdAt'
+          'staffUid', 'staffEmail', 'requestType', 'resourceName',
+          'startDateTime', 'endDateTime', 'purpose', 'notes', 'status', 'createdAt'
         ])
         && request.resource.data.keys().hasOnly([
-          'staffUid', 'customerName', 'contactNumber', 'bookingDate',
-          'purpose', 'venue', 'notes', 'status', 'createdAt'
+          'staffUid', 'staffEmail', 'requestType', 'resourceName',
+          'startDateTime', 'endDateTime', 'purpose', 'notes', 'status', 'createdAt'
         ])
         && request.resource.data.staffUid == request.auth.uid
-        && request.resource.data.customerName is string
-        && request.resource.data.contactNumber is string
-        && request.resource.data.bookingDate is timestamp
+        && request.resource.data.staffEmail == request.auth.token.email
+        && request.resource.data.requestType in ['facility', 'vehicle']
+        && request.resource.data.resourceName is string
+        && ((request.resource.data.requestType == 'facility'
+              && request.resource.data.resourceName in ['GYM', 'AUDITORIUM', 'AVR1', 'AVR2'])
+            || (request.resource.data.requestType == 'vehicle'
+              && request.resource.data.resourceName in ['HINO', 'HI-ACE', 'BUS1', 'BUS2', 'TRAVIZ']))
+        && request.resource.data.startDateTime is timestamp
+        && request.resource.data.endDateTime is timestamp
+        && request.resource.data.endDateTime > request.resource.data.startDateTime
         && request.resource.data.purpose is string
-        && request.resource.data.get('venue', '') is string
-        && request.resource.data.get('notes', '') is string
+        && request.resource.data.purpose.size() > 0
+        && request.resource.data.notes is string
         && request.resource.data.status == 'pending'
         && request.resource.data.createdAt == request.time;
 
