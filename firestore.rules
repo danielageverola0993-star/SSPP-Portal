@@ -72,7 +72,7 @@ service cloud.firestore {
     }
 
     match /bookings/{bookingId} {
-      allow create: if isStaff()
+      allow create: if (isStaff() || isAdmin())
         && request.resource.data.keys().hasAll([
           'staffUid', 'staffEmail', 'requestType', 'resourceName',
           'startDateTime', 'endDateTime', 'purpose', 'notes', 'status', 'createdAt'

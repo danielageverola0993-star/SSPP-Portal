@@ -199,7 +199,7 @@ export default function DashboardPage() {
 
   async function handleCreateBooking(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!db || !user || role !== "staff") return;
+    if (!db || !user || !role) return;
 
     const form = event.currentTarget;
     const values = new FormData(form);
@@ -311,7 +311,7 @@ export default function DashboardPage() {
 
   const requestTable = (
     <section className="staff-recent-requests" aria-labelledby="recent-requests-title">
-      <div className="staff-table-heading"><h2 id="recent-requests-title">{activeStaffNav === "Dashboard" ? "Recent Request Table" : "Request Status"}</h2><span className="live-update-label">Live updates</span></div>
+      <div className="staff-table-heading"><h2 id="recent-requests-title">{activeStaffNav === "Dashboard" ? "Recent Request Table" : "Request Status"}</h2><span className="live-update-label">{role === "staff" ? "Live updates" : "Latest requests"}</span></div>
       <div className="staff-table-scroll">
         <table className="staff-request-table">
           <thead><tr><th scope="col">Name</th><th scope="col">Type</th><th scope="col">Date</th><th scope="col">Status</th></tr></thead>
@@ -323,7 +323,7 @@ export default function DashboardPage() {
               </tr>
             ))}
             {loadingBookings && bookings.length === 0 && <tr><td colSpan={4} className="staff-table-empty">Loading requests...</td></tr>}
-            {!loadingBookings && bookings.length === 0 && <tr><td colSpan={4} className="staff-table-empty">Wala pa kay na-submit nga request.</td></tr>}
+            {!loadingBookings && bookings.length === 0 && <tr><td colSpan={4} className="staff-table-empty">{role === "admin" ? "Wala pay booking request." : "Wala pa kay na-submit nga request."}</td></tr>}
           </tbody>
         </table>
       </div>
@@ -410,88 +410,63 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className={`dashboard-page${role === "staff" ? ` staff-dashboard-page${sidebarOpen ? "" : " staff-sidebar-collapsed"}${activeStaffNav === "Submit Request" ? " staff-submit-view" : ""}` : ""}`}>
-      {role === "staff" && (
+    <main className={`dashboard-page staff-dashboard-page${sidebarOpen ? "" : " staff-sidebar-collapsed"}${activeStaffNav === "Submit Request" ? " staff-submit-view" : ""}`}>
+      {
         <aside className={`staff-sidebar${sidebarOpen ? "" : " is-hidden"}`} id="staff-sidebar">
           <button className="staff-sidebar-brand" type="button" onClick={() => setActiveStaffNav("Dashboard")}>
             <Image src={collegeLogo} alt="" width={40} height={40} />
             <span>SSPP Portal</span>
           </button>
-          <nav className="staff-sidebar-nav" aria-label="Staff menu">
-            {[
+          <nav className="staff-sidebar-nav" aria-label={`${role === "admin" ? "Admin" : "Staff"} menu`}>
+            {(role === "admin" ? [
+              { label: "Dashboard", icon: <><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9M9 20v-7h6v7"/></> },
+              { label: "Submit Request", icon: <><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 8v8M8 12h8"/></> },
+              { label: "Admin: Approvals", icon: <><rect x="4" y="4" width="16" height="16" rx="2"/><path d="m8 12 2.5 2.5L16 9"/></> },
+              { label: "Calendar/Schedule", icon: <><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M7 3v4M17 3v4M4 10h16"/></> },
+              { label: "Request Status", icon: <><rect x="4" y="11" width="4" height="9" rx="1"/><rect x="10" y="5" width="4" height="15" rx="1"/><rect x="16" y="2" width="4" height="18" rx="1"/></> },
+            ] : [
               { label: "Dashboard", icon: <><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9M9 20v-7h6v7"/></> },
               { label: "Submit Request", icon: <><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 8v8M8 12h8"/></> },
               { label: "Calendar/Schedule", icon: <><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M7 3v4M17 3v4M4 10h16"/></> },
               { label: "Request Status", icon: <><rect x="4" y="11" width="4" height="9" rx="1"/><rect x="10" y="5" width="4" height="15" rx="1"/><rect x="16" y="2" width="4" height="18" rx="1"/></> },
-            ].map((item) => (
+            ]).map((item) => (
               <button key={item.label} type="button" className={`staff-nav-link${activeStaffNav === item.label ? " active" : ""}`} aria-current={activeStaffNav === item.label ? "page" : undefined} onClick={() => setActiveStaffNav(item.label)}>
                 <svg viewBox="0 0 24 24" aria-hidden="true">{item.icon}</svg><span>{item.label}</span>
               </button>
             ))}
           </nav>
         </aside>
-      )}
+      }
       <div className="dashboard-shell">
         <header className="dashboard-header" id={role === "staff" ? "staff-dashboard" : undefined}>
           <div className="dashboard-title-group">
-            {role === "staff" && <button className="sidebar-toggle" type="button" onClick={() => setSidebarOpen((open) => !open)} aria-expanded={sidebarOpen} aria-controls="staff-sidebar" aria-label={sidebarOpen ? "Hide staff sidebar" : "Show staff sidebar"} title={sidebarOpen ? "Hide sidebar" : "Show sidebar"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg></button>}
-            <div><span className="dashboard-eyebrow">ASSUMPTION COLLEGE OF DAVAO</span><h1>{role === "admin" ? "Admin Dashboard" : activeStaffNav === "Dashboard" ? "Staff Dashboard" : activeStaffNav}</h1></div>
+            <button className="sidebar-toggle" type="button" onClick={() => setSidebarOpen((open) => !open)} aria-expanded={sidebarOpen} aria-controls="staff-sidebar" aria-label={sidebarOpen ? "Hide sidebar" : "Show sidebar"} title={sidebarOpen ? "Hide sidebar" : "Show sidebar"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg></button>
+            <div><span className="dashboard-eyebrow">ASSUMPTION COLLEGE OF DAVAO</span><h1>{activeStaffNav === "Dashboard" ? `${role === "admin" ? "Admin" : "Staff"} Dashboard` : activeStaffNav}</h1></div>
           </div>
           <div className="dashboard-account"><span title={user.email ?? "Signed-in user"}>{user.email}</span><button type="button" onClick={handleSignOut} disabled={signingOut}>{signingOut ? "Signing out..." : "Sign out"}</button></div>
         </header>
 
         {message && (role === "admin" || !message.startsWith("Dili makuha ang bookings.")) && <p className="dashboard-message" role="status">{message}</p>}
 
-        {role === "staff" ? (
-          <div className="staff-dashboard-content">
-            {activeStaffNav === "Dashboard" && <>
-              <div className="staff-overview">
-              <section className="staff-stat-grid" aria-label="Request totals">
-                <article className="staff-stat-card total-stat"><span>Total Requests</span><strong>{bookings.length}</strong><span className="staff-stat-icon" aria-hidden="true">✎</span></article>
-                <article className="staff-stat-card pending-stat"><span>Pending</span><strong>{pendingBookings.length}</strong><span className="staff-stat-icon" aria-hidden="true">⌛</span></article>
-                <article className="staff-stat-card approved-stat"><span>Approved</span><strong>{approvedBookings.length}</strong><span className="staff-stat-icon" aria-hidden="true">●</span></article>
-              </section>
-              <section className="staff-quick-actions" aria-labelledby="quick-actions-title">
-                <h2 id="quick-actions-title">Quick Actions</h2>
-                <button type="button" onClick={() => setActiveStaffNav("Submit Request")}><span aria-hidden="true">＋</span> Submit New Request</button>
-                <button type="button" onClick={() => setActiveStaffNav("Calendar/Schedule")}><span aria-hidden="true">▣</span> Check Schedule</button>
-              </section>
-              </div>
-              {requestTable}
-            </>}
-            {activeStaffNav === "Request Status" && requestTable}
-            {activeStaffNav === "Calendar/Schedule" && scheduleView}
-            {activeStaffNav === "Submit Request" && submitRequestView}
-          </div>
-        ) : (
-          <>
-            <section className="booking-list-panel admin-bookings" aria-labelledby="admin-requests-title">
-              <div className="booking-section-heading"><div><p className="dashboard-eyebrow">ACCOUNT ACCESS</p><h2 id="admin-requests-title">Admin signup requests</h2></div><button className="refresh-button" type="button" onClick={() => void loadBookings()} disabled={loadingBookings}>{loadingBookings ? "Loading..." : "Refresh"}</button></div>
-              {adminRequests.filter((request) => request.status === "pending").length === 0 ? <p className="booking-empty">Walay pending Admin signup requests.</p> : (
-                <div className="booking-cards">{adminRequests.filter((request) => request.status === "pending").map((request) => <article className="booking-card" key={request.uid}>
-                  <div className="booking-card-top"><h3>{request.email}</h3><span className="booking-status status-pending">pending</span></div>
-                  <p className="booking-meta">Requested {formatDate(request.createdAt)}</p>
-                  <div className="booking-actions"><button type="button" className="approve-button" onClick={() => void handleAdminRequest(request, true)} disabled={reviewingId === `request:${request.uid}`}>{reviewingId === `request:${request.uid}` ? "Saving..." : "Approve Admin"}</button><button type="button" className="reject-button" onClick={() => void handleAdminRequest(request, false)} disabled={reviewingId === `request:${request.uid}`}>Reject</button></div>
-                </article>)}</div>
-              )}
+        <div className="staff-dashboard-content">
+          {activeStaffNav === "Dashboard" && <><div className="staff-overview"><section className="staff-stat-grid" aria-label="Booking totals">
+            <article className="staff-stat-card total-stat"><span>Total Requests</span><strong>{bookings.length}</strong><span className="staff-stat-icon" aria-hidden="true">✎</span></article>
+            <article className="staff-stat-card pending-stat"><span>Pending</span><strong>{pendingBookings.length}</strong><span className="staff-stat-icon" aria-hidden="true">⌛</span></article>
+            <article className="staff-stat-card approved-stat"><span>Approved</span><strong>{approvedBookings.length}</strong><span className="staff-stat-icon" aria-hidden="true">●</span></article>
+          </section><section className="staff-quick-actions" aria-labelledby="quick-actions-title"><h2 id="quick-actions-title">Quick Actions</h2>
+            <button type="button" onClick={() => setActiveStaffNav("Submit Request")}><span aria-hidden="true">+</span> Submit New Request</button>
+            {role === "admin" && <button type="button" onClick={() => setActiveStaffNav("Admin: Approvals")}><span aria-hidden="true">✓</span> Review Requests</button>}
+            <button type="button" onClick={() => setActiveStaffNav("Calendar/Schedule")}><span aria-hidden="true">□</span> Check Schedule</button></section></div>{requestTable}</>}
+          {activeStaffNav === "Request Status" && requestTable}
+          {activeStaffNav === "Calendar/Schedule" && scheduleView}
+          {activeStaffNav === "Submit Request" && submitRequestView}
+          {role === "admin" && activeStaffNav === "Admin: Approvals" && <>
+            <section className="staff-recent-requests"><div className="staff-table-heading"><div><p className="dashboard-eyebrow">REVIEW QUEUE</p><h2>Booking Requests</h2></div><button className="refresh-button" type="button" onClick={() => void loadBookings()} disabled={loadingBookings}>{loadingBookings ? "Loading..." : "Refresh"}</button></div>
+              {loadingBookings && !bookings.length ? <p className="booking-empty">Loading bookings...</p> : !bookings.length ? <p className="booking-empty">Wala pay booking requests karon.</p> : <div className="booking-cards">{bookings.map((booking) => <article className="booking-card" key={booking.id}><div className="booking-card-top"><h3>{booking.resourceName ? `${booking.requestType === "vehicle" ? "Vehicle" : "Facility"}: ${booking.resourceName}` : booking.customerName ?? "Booking request"}</h3><span className={`booking-status status-${booking.status}`}>{booking.status}</span></div><p>{booking.purpose}</p><p className="booking-meta">Requested by {booking.staffEmail ?? booking.staffUid}</p><p className="booking-meta">{formatDate(bookingStart(booking))}{booking.endDateTime ? ` – ${formatDate(booking.endDateTime)}` : ""}</p>{booking.status === "pending" && <div className="booking-actions"><button className="approve-button" type="button" onClick={() => void handleReview(booking,"approved")} disabled={reviewingId === `booking:${booking.id}`}>Approve</button><button className="reject-button" type="button" onClick={() => void handleReview(booking,"rejected")} disabled={reviewingId === `booking:${booking.id}`}>Reject</button></div>}</article>)}</div>}
             </section>
-
-            <section className="booking-list-panel admin-bookings" aria-labelledby="admin-bookings-title">
-              <div className="booking-section-heading"><div><p className="dashboard-eyebrow">REVIEW QUEUE</p><h2 id="admin-bookings-title">Booking requests</h2></div><button className="refresh-button" type="button" onClick={() => void loadBookings()} disabled={loadingBookings}>{loadingBookings ? "Loading..." : "Refresh"}</button></div>
-              {loadingBookings && bookings.length === 0 ? <p className="booking-empty">Loading bookings...</p> : bookings.length === 0 ? <p className="booking-empty">Walay booking requests karon.</p> : (
-                <div className="booking-cards">{bookings.map((booking) => <article className="booking-card" key={booking.id}>
-                  <div className="booking-card-top"><h3>{booking.resourceName ? `${booking.requestType === "vehicle" ? "Vehicle" : "Facility"}: ${booking.resourceName}` : booking.customerName ?? "Booking request"}</h3><span className={`booking-status status-${booking.status}`}>{booking.status}</span></div>
-                  <p>{booking.purpose}{booking.venue ? ` · ${booking.venue}` : ""}</p>
-                  <p className="booking-meta">Requested by {booking.staffEmail ?? booking.staffUid}</p>
-                  <p className="booking-meta">{formatDate(bookingStart(booking))}{booking.endDateTime ? ` – ${formatDate(booking.endDateTime)}` : ""}{booking.contactNumber ? ` · ${booking.contactNumber}` : ""}</p>
-                  {booking.notes && <p className="booking-notes-text">{booking.notes}</p>}
-                  <p className="booking-meta">Submitted by staff account {booking.staffUid}</p>
-                  {booking.status === "pending" && <div className="booking-actions"><button type="button" className="approve-button" onClick={() => void handleReview(booking, "approved")} disabled={reviewingId === `booking:${booking.id}`}>{reviewingId === `booking:${booking.id}` ? "Saving..." : "Approve"}</button><button type="button" className="reject-button" onClick={() => void handleReview(booking, "rejected")} disabled={reviewingId === `booking:${booking.id}`}>{reviewingId === `booking:${booking.id}` ? "Saving..." : "Reject"}</button></div>}
-                </article>)}</div>
-              )}
-            </section>
-          </>
-        )}
+            <section className="staff-recent-requests"><div className="staff-table-heading"><div><p className="dashboard-eyebrow">ACCOUNT ACCESS</p><h2>Admin Signup Requests</h2></div></div>{adminRequests.filter((r)=>r.status==="pending").length===0?<p className="booking-empty">Walay pending Admin signup requests.</p>:<div className="booking-cards">{adminRequests.filter((r)=>r.status==="pending").map((request)=><article className="booking-card" key={request.uid}><div className="booking-card-top"><h3>{request.email}</h3><span className="booking-status status-pending">pending</span></div><p className="booking-meta">Requested {formatDate(request.createdAt)}</p><div className="booking-actions"><button type="button" className="approve-button" onClick={()=>void handleAdminRequest(request,true)} disabled={reviewingId===`request:${request.uid}`}>Approve Admin</button><button type="button" className="reject-button" onClick={()=>void handleAdminRequest(request,false)} disabled={reviewingId===`request:${request.uid}`}>Reject</button></div></article>)}</div>}</section>
+          </>}
+        </div>
       </div>
     </main>
   );
